@@ -119,8 +119,7 @@ class Notifier(IndicatorUtils):
             self.redis_client = RedisNotifier(
                 stream=notifier_config['redis']['required']['stream'],
                 redis_server=notifier_config['redis']['required']['redis_server'],
-                redis_port=notifier_config['redis']['required']['redis_port'],
-                redis_db=notifier_config['redis']['required']['redis_db']
+                redis_port=notifier_config['redis']['required']['redis_port']
             )
             enabled_notifiers.append('redis')
 
@@ -399,7 +398,6 @@ class Notifier(IndicatorUtils):
         Returns:
             bool: Is the notifier configured?
         """
-
         notifier_configured = True
         for _, val in notifier_config[notifier]['required'].items():
             if not val:
