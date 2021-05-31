@@ -17,17 +17,22 @@ class RedisNotifier(NotifierUtils):
 
         Args:
             redis_server (str): Redis erver Hostname / IP.
-            redis_port   (int): Redis server redis_port
+            redis_port   (int): Redis server port
             redis_db     (int): Redis server database number
             stream (str): Redis stream name.
         """
-        if redis_port is None:
-            redis_port = "6379"
-        if redis_db is None:
-            redis_db = "0"
+        self.redis_server = redis_server
+        self.redis_port = redis_port
+        self.redis_db = redis_db
+        self.stream = stream
+        if self.redis_port is None:
+            self.redis_port = "6379"
+        if self.redis_db is None:
+            self.redis_db = "0"
 
         self.logger = structlog.get_logger()
-        self.connection = Database((host='{}', port='{}', db='{}').format(redis_server, redis_port, redis_db))
+        self.connection = Database(host={}, port={}, db={}).format(self.redis_server, self.redis_port, self.redis_db)
+        print(self.connection)
         self.channel = self.connection.Stream('{}').format(stream)
 
     def notify(self, message):

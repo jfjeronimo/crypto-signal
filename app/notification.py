@@ -117,10 +117,10 @@ class Notifier(IndicatorUtils):
             'redis', notifier_config)
         if self.redis_configured:
             self.redis_client = RedisNotifier(
+                stream=notifier_config['redis']['required']['stream'],
                 redis_server=notifier_config['redis']['required']['redis_server'],
-                redis_port=notifier_config['redis']['optional']['redis_port'],
-                redis_db=notifier_config['redis']['optional']['redis_db'],
-                stream=notifier_config['redis']['required']['stream']
+                redis_port=notifier_config['redis']['required']['redis_port'],
+                redis_db=notifier_config['redis']['required']['redis_db']
             )
             enabled_notifiers.append('redis')
 
@@ -215,6 +215,7 @@ class Notifier(IndicatorUtils):
                 new_message['status'] = condition['label']
                 self.notify_discord([new_message])
                 self.notify_webhook([new_message], None)
+                self.notify_redis([new_message])
                 self.notify_telegram([new_message], None)
                 self.notify_stdout([new_message])
 
@@ -232,10 +233,11 @@ class Notifier(IndicatorUtils):
                                  market_pair, candle_period)
                 self.logger.exception(e)
 
-        # self.notify_slack(new_analysis)
+        self.notify_slack(new_analysis)
         self.notify_discord(messages)
         self.notify_webhook(messages, chart_file)
-        # self.notify_twilio(new_analysis)
+        self.notify_twilio(new_analysis)
+        self.notify_redis(messages)
         self.notify_email(messages)
         self.notify_telegram(messages, chart_file)
         self.notify_stdout(messages)
