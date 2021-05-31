@@ -113,7 +113,7 @@ class Notifier(IndicatorUtils):
             )
             enabled_notifiers.append('telegram')
 
-                self.redis_configured = self._validate_required_config(
+        self.redis_configured = self._validate_required_config(
             'redis', notifier_config)
         if self.redis_configured:
             self.redis_client = RedisNotifier(
