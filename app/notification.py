@@ -336,6 +336,26 @@ class Notifier(IndicatorUtils):
         else:
             self.telegram_client.send_messages(formatted_messages)
 
+    def notify_redis(self, messages):
+        """Send notifications via the Redis notifier
+
+        Args:
+            messages (list): List of messages to send for a specific Exchanche/Market Pair/Candle Period
+        """
+
+        if not self.redis_configured:
+            return
+
+        message_template = Template(
+            self.notifier_config['redis']['optional']['template'])
+
+        formatted_messages = []
+
+        for message in messages:
+            formatted_messages.append(message_template.render(message))
+
+        self.redis_client.send_messages(formatted_messages)
+
     def notify_webhook(self, messages, chart_file):
         """Send notifications via a new webhook notifier
 
