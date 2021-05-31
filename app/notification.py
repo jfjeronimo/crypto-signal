@@ -34,6 +34,7 @@ from notifiers.stdout_client import StdoutNotifier
 from notifiers.telegram_client import TelegramNotifier
 from notifiers.twilio_client import TwilioNotifier
 from notifiers.webhook_client import WebhookNotifier
+from notifiers.redis_client import RedisNotifier
 
 matplotlib.use('Agg')
 
@@ -111,6 +112,17 @@ class Notifier(IndicatorUtils):
                 parse_mode=notifier_config['telegram']['optional']['parse_mode']
             )
             enabled_notifiers.append('telegram')
+
+                self.redis_configured = self._validate_required_config(
+            'redis', notifier_config)
+        if self.redis_configured:
+            self.redis_client = RedisNotifier(
+                redis_server=notifier_config['redis']['required']['redis_server'],
+                redis_port=notifier_config['redis']['optional']['redis_port'],
+                redis_db=notifier_config['redis']['optional']['redis_db'],
+                stream=notifier_config['redis']['required']['stream']
+            )
+            enabled_notifiers.append('redis')
 
         self.webhook_configured = self._validate_required_config(
             'webhook', notifier_config)
