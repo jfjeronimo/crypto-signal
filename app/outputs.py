@@ -5,7 +5,7 @@ import json
 
 import numpy as np
 import structlog
-
+from notifiers.redis_client import RedisNotifier
 
 class Output():
     """ Handles outputting results to the terminal.
@@ -19,7 +19,8 @@ class Output():
         self.dispatcher = {
             'cli': self.to_cli,
             'csv': self.to_csv,
-            'json': self.to_json
+            'json': self.to_json,
+            'redis': self.to_redis
         }
 
     def to_cli(self, results, market_pair):
@@ -200,3 +201,33 @@ class Output():
         output = json.dumps(formatted_results)
         output += '\n'
         return output
+
+    def to_redis(self, results, market_pair):
+        """Creates the JSON to output to the CLI
+
+        Args:
+            market_pair (str): Market pair that this message relates to.
+            results (dict): The result of the completed analysis to output.
+
+        Returns:
+            str: Completed JSON message
+        """
+        self.stream = 'raw_events'
+        self.redis_server = '172.16.0.11'
+        self.redis_port = '6379'
+        for indicator_type in results:
+            for indicator in results[indicator_type]:
+                for index, analysis in enumerate(results[indicator_type][indicator]):
+                    results[indicator_type][indicator][index]['result'] = analysis['result'].to_dict(
+                        orient='records'
+                    )[-1]
+
+        formatted_results = {'pair': market_pair, 'results': results}
+        output = json.dumps(formatted_results)
+        output += '\n'
+        RedisNotifier(
+            self.redis_server,
+            self.redis_port,
+            self.stream
+            )
+        RedisNotifier.send_messages(output)
