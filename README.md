@@ -2,7 +2,8 @@
 
 
 ## Notable Changes
-- Integration with redis for notifications
+- Integration with redis stream for notifications in json format
+- Integration with redis stream for output (raw events) in json format
 - Solved bugs
 
 
