@@ -223,11 +223,11 @@ class Output():
                     )[-1]
 
         formatted_results = {'pair': market_pair, 'results': results}
-        output = json.dumps(formatted_results)
-        output += '\n'
-        RedisNotifier(
+        self.output = json.dumps(formatted_results)
+        #self.output += '\n'
+        self.redis_client = RedisNotifier(
             self.redis_server,
             self.redis_port,
             self.stream
             )
-        RedisNotifier.send_messages(output)
+        self.redis_client.notify(self.output)
