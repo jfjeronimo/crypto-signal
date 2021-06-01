@@ -350,12 +350,16 @@ class Notifier(IndicatorUtils):
         message_template = Template(
             self.notifier_config['redis']['optional']['template'])
 
-        formatted_messages = []
+        #formatted_messages = []
 
+        #for message in messages:
+        #    formatted_messages.append(message_template.render(message))
+        #event = ''
         for message in messages:
-            formatted_messages.append(message_template.render(message))
-
-        self.redis_client.send_messages(formatted_messages)
+        #    event = message_template.render(message)
+            formatted_messages = message_template.render(message)
+        #output = json.dumps(formatted_messages)
+        self.redis_client.notify(formatted_messages)
 
     def notify_webhook(self, messages, chart_file):
         """Send notifications via a new webhook notifier
