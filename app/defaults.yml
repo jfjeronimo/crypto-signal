@@ -55,9 +55,7 @@ notifiers:
     required:
       redis_server: null
       stream: null
-    optional:
       redis_port: null
-      redis_db: null
       template: "{{exchange}}-{{market}}-{{indicator}}-{{indicator_number}} is {{status}}!{{ '\n' -}}"
   webhook:
     required:
