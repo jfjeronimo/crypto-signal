@@ -18,18 +18,14 @@ class RedisNotifier(NotifierUtils):
         Args:
             redis_server (str): Redis erver Hostname / IP.
             redis_port   (int): Redis server port
-            redis_db     (int): Redis server database number
             stream (str): Redis stream name.
         """
         self.redis_server = redis_server
         self.redis_port = redis_port
         self.stream = stream
-        if self.redis_port is None:
-            self.redis_port = "6379"
 
         self.logger = structlog.get_logger()
         self.connection = Database(host=self.redis_server, port=self.redis_port)
-        print(self.connection)
         self.channel = self.connection.Stream(self.stream)
 
     def notify(self, message):
