@@ -212,7 +212,7 @@ class Output():
         Returns:
             str: Completed JSON message
         """
-        self.stream = 'raw_events'
+        self.stream = 'test_raw_events'
         self.redis_server = '172.16.0.11'
         self.redis_port = '6379'
         for indicator_type in results:

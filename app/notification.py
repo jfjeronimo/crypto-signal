@@ -35,6 +35,8 @@ from notifiers.telegram_client import TelegramNotifier
 from notifiers.twilio_client import TwilioNotifier
 from notifiers.webhook_client import WebhookNotifier
 from notifiers.redis_client import RedisNotifier
+from notifiers.file_client import FileNotifier
+
 
 matplotlib.use('Agg')
 
@@ -141,6 +143,14 @@ class Notifier(IndicatorUtils):
 
         self.logger.info('enabled notifers: %s', enabled_notifiers)
 
+        self.file_configured = self._validate_required_config(
+            'file', notifier_config)
+        if self.file_configured:
+            self.file_client = FileNotifier()
+            enabled_notifiers.append('file')
+
+        self.logger.info('enabled notifers: %s', enabled_notifiers)
+
     def notify_all(self, new_analysis):
         """Trigger a notification for all notification options.
 
@@ -217,6 +227,7 @@ class Notifier(IndicatorUtils):
                 self.notify_redis([new_message])
                 self.notify_telegram([new_message], None)
                 self.notify_stdout([new_message])
+                self.notify_file([new_message])
 
     def notify_all_messages(self, exchange, market_pair, candle_period, messages):
         chart_file = None
@@ -240,6 +251,7 @@ class Notifier(IndicatorUtils):
         self.notify_email(messages)
         self.notify_telegram(messages, chart_file)
         self.notify_stdout(messages)
+        self.notify_file(messages)
 
     def notify_discord(self, messages):
         """Send a notification via the discord notifier
@@ -384,6 +396,24 @@ class Notifier(IndicatorUtils):
             formatted_message = message_template.render(message)
 
             self.stdout_client.notify(formatted_message.strip())
+
+    def notify_file(self, messages):
+        """Send a notification via the stdout notifier
+
+        Args:
+            messages (list): List of messages to send for a specific Exchanche/Market Pair/Candle Period
+        """
+
+        if not self.file_configured:
+            return
+
+        message_template = Template(
+            self.notifier_config['file']['optional']['template'])
+
+        for message in messages:
+            formatted_message = message_template.render(message)
+
+            self.file_client.notify(formatted_message.strip())
 
     def _validate_required_config(self, notifier, notifier_config):
         """Validate the required configuration items are present for a notifier.
