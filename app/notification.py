@@ -141,8 +141,6 @@ class Notifier(IndicatorUtils):
             self.stdout_client = StdoutNotifier()
             enabled_notifiers.append('stdout')
 
-        self.logger.info('enabled notifers: %s', enabled_notifiers)
-
         self.file_configured = self._validate_required_config(
             'file', notifier_config)
         if self.file_configured:

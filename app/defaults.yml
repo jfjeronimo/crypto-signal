@@ -68,6 +68,11 @@ notifiers:
       enable: null
     optional:
       template: "{{exchange}}-{{market}}-{{indicator}}-{{indicator_number}} is {{status}}!{{ '\n' -}}"
+  file:
+    required:
+      enable: null
+    optional:
+      template: "{{exchange}}-{{market}}-{{indicator}}-{{indicator_number}} is {{status}}!{{ '\n' -}}"
 
 
 indicators:
