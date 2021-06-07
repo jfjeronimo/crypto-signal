@@ -2,6 +2,7 @@
 
 
 ## Notable Changes
+- Output Alerts to file in json format
 - Integration with redis stream for notifications in json format
 - Integration with redis stream for output (raw events) in json format
 - Solved bugs
